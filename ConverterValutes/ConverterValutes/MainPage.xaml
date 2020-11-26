@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConverterValutes.MainPage">
+
+    <StackLayout>
+        <StackLayout>
+            <Frame BackgroundColor="#2196F3" 
+               Padding="24" 
+               CornerRadius="0">
+                <Label Text="Конвертор валют" 
+                   HorizontalTextAlignment="Center" 
+                   TextColor="White" 
+                   FontSize="36"/>
+            </Frame>
+        </StackLayout>
+        
+        <StackLayout>
+            <Label x:Name="label" Text="Выберите дату" FontSize="Medium" />
+            <DatePicker Format="D" Date="{Binding ChoiceDate}" MaximumDate="{Binding MaxDate}">
+            </DatePicker>
+        </StackLayout>
+        
+        <StackLayout Margin="5"
+                     Orientation="Horizontal">
+            <Label Text="Ближайщая существующая дата:"
+                   HorizontalOptions="End"/>
+            <Label Text="{Binding Date}"
+                   HorizontalOptions="End"/>
+        </StackLayout>
+
+        <Frame>
+            <StackLayout Orientation="Horizontal">
+                <StackLayout>
+                    <Label Text="Выберите валюту"/>
+                    <Picker SelectedItem="{Binding ResultSelectedValuta}"
+                            ItemsSource="{Binding NameValutas}"
+                            ItemDisplayBinding="{Binding CharCode}" />
+                </StackLayout>
+                <StackLayout>
+                    <Entry Placeholder="Значение"
+                           x:Name="Input"
+                           Text="{Binding Input}"
+                           VerticalOptions="EndAndExpand"/>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <Frame>
+            <StackLayout Orientation="Horizontal">
+                <StackLayout>
+                    <Label Text="Выберите валюту"/>
+                    <Picker SelectedItem="{Binding SourceSelectedValuta}"
+                            ItemsSource="{Binding NameValutas}"
+                            ItemDisplayBinding="{Binding CharCode}" />
+
+                </StackLayout>
+                <StackLayout>
+                    <Entry Placeholder="Значение" 
+                           VerticalOptions="EndAndExpand"
+                           x:Name="Result"
+                           Text="{Binding Result}"/>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+    </StackLayout>
+
+</ContentPage>
