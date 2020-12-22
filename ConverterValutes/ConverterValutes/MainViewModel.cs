@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace ConverterValutes
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModel : BindableObject
     {
         public ObservableCollection<NameValuta> NameValutas { get; set; }
         public MainViewModel()
@@ -103,25 +105,30 @@ namespace ConverterValutes
         public string Input
         {
             get { return _input; }
-            set 
+            set
             {
+                _input = value;
                 if (SourceSelectedValuta != null && ResultSelectedValuta != null && !string.IsNullOrEmpty(value))
                 {
-                    Result = Math.Round(((ResultSelectedValuta.Value * Convert.ToDouble(value)) / SourceSelectedValuta.Value), 4).ToString();
-                    _input = value;
+                    //Result = Math.Round(((ResultSelectedValuta.Value * Convert.ToDouble(value)) / SourceSelectedValuta.Value), 4).ToString();
+                    Result = (ResultSelectedValuta.Value * Convert.ToDouble(value) / SourceSelectedValuta.Value).ToString();
                 }
                 else
                 {
-                    _input = "";
-                    Result = "";
+                    _input = string.Empty;
+                    Result = string.Empty;
                 }
-                OnPropertyChanged(nameof(Input)); 
+                OnPropertyChanged(nameof(Input));
             }
         }
         public DateTime ChoiceDate
         {
             get { return _ChoiceDate; }
-            set { _ChoiceDate = value; LoadData(); OnPropertyChanged(nameof(ChoiceDate)); }
+            set { 
+                _ChoiceDate = value;
+                LoadData();
+                OnPropertyChanged(nameof(ChoiceDate)); 
+            }
         }
         public DateTime MaxDate
         {
@@ -134,11 +141,8 @@ namespace ConverterValutes
             get { return _result; }
             set 
             {
-                if (SourceSelectedValuta != null && ResultSelectedValuta != null && !string.IsNullOrEmpty(Input))
-                    _result = Math.Round(((ResultSelectedValuta.Value * Convert.ToDouble(Input)) / SourceSelectedValuta.Value), 4).ToString();
-                else
-                    _result = string.Empty;
-                OnPropertyChanged(nameof(Result)); 
+                _result = value;
+                OnPropertyChanged(nameof(Result));
             }
         }
         public NameValuta SourceSelectedValuta
@@ -150,6 +154,19 @@ namespace ConverterValutes
         {
             get { return _resultSelectedValuta; }
             set { _resultSelectedValuta = value; OnPropertyChanged(nameof(ResultSelectedValuta)); }
+        }
+
+        private int _indexResult;
+        private int _indexSource;
+        public int IndexResult
+        {
+            get { return _indexResult; }
+            set { _indexResult = value; OnPropertyChanged(nameof(IndexResult)); }
+        }
+        public int IndexSource
+        {
+            get { return _indexSource; }
+            set { _indexSource = value; OnPropertyChanged(nameof(IndexSource)); }
         }
 
         private async void LoadData()
@@ -234,9 +251,12 @@ namespace ConverterValutes
                 PreviousURL = info.PreviousURL;
                 Valute = info.Valute;
 
+                int indexR = IndexResult;
+                int indexS = IndexSource;
+
                 NameValutas.Clear();
 
-                NameValuta nameValuta = new NameValuta
+                NameValuta RUB = new NameValuta
                 {
                     ID = "R00001",
                     NumCode = "001",
@@ -247,7 +267,7 @@ namespace ConverterValutes
                     Previous = (float)1
                 };
 
-                NameValutas.Add(nameValuta);
+                NameValutas.Add(RUB);
                 NameValutas.Add(info.Valute.AUD);
                 NameValutas.Add(info.Valute.AZN);
                 NameValutas.Add(info.Valute.GBP);
@@ -282,16 +302,37 @@ namespace ConverterValutes
                 NameValutas.Add(info.Valute.ZAR);
                 NameValutas.Add(info.Valute.KRW);
                 NameValutas.Add(info.Valute.JPY);
+
+                IndexResult = indexR;
+                IndexSource = indexS;
+
+                Result = (NameValutas.ElementAt(indexR).Value / SourceSelectedValuta.Value).ToString();
+
             }
             catch (Exception ex)
             { }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string prop = "")
+        private ICommand _change;
+        public ICommand Change
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            get { return _change ?? (_change = new Command(ChangeExecute, ChangeCanExecute)); }
+        }
+        private void ChangeExecute()
+        {
+            NameValuta nm = new NameValuta();
+            nm = SourceSelectedValuta;
+            SourceSelectedValuta = ResultSelectedValuta;
+            ResultSelectedValuta = nm;
+
+            string str = Result;
+            Result = Input;
+            Input = str;
+
+        }
+        private bool ChangeCanExecute()
+        {
+            return true;
         }
     }
 }
