@@ -34,6 +34,7 @@
                 <StackLayout>
                     <Label Text="Выберите валюту"/>
                     <Picker SelectedItem="{Binding ResultSelectedValuta}"
+                            WidthRequest="200"
                             SelectedIndex="{Binding IndexResult}"
                             ItemsSource="{Binding NameValutas}"
                             ItemDisplayBinding="{Binding CharCode}" />
@@ -41,6 +42,7 @@
                 <StackLayout>
                     <Entry Placeholder="Значение"
                            x:Name="Input"
+                            WidthRequest="150"
                            Text="{Binding Input}"
                            VerticalOptions="EndAndExpand"/>
                 </StackLayout>
@@ -52,6 +54,7 @@
                 <StackLayout>
                     <Label Text="Выберите валюту"/>
                     <Picker SelectedItem="{Binding SourceSelectedValuta}"
+                            WidthRequest="200"
                             ItemsSource="{Binding NameValutas}"
                             SelectedIndex="{Binding IndexSource}"
                             ItemDisplayBinding="{Binding CharCode}" />
@@ -61,6 +64,7 @@
                     <Entry Placeholder="Значение" 
                            VerticalOptions="EndAndExpand"
                            x:Name="Result"
+                            WidthRequest="150"
                            Text="{Binding Result}"/>
                 </StackLayout>
             </StackLayout>
